@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<!--Et si..? / Plus loin que la nuit et le jour-->
+
+<!-- SOURCES 
+	http://css3buttongenerator.com/.-->
+
+<html lang="fr-ch">
+	<head>
+
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+		<title> Orbital Game Jam </title>
+
+		<link rel="stylesheet" type="text/css" href="game.css">
+
+		<script type='text/javascript'>
+			var canvas;
+			var ctx;
+			var width = 2048;
+			var height = 1052;
+
+			function launch() {
+				canvas = document.createElement("canvas");
+		 		canvas.id = "game";
+		 		canvas.height = height;
+		 		canvas.width = width;
+		 		canvas.style.border = "none";
+		 		ctx = canvas.getContext('2d');
+		 		document.body.appendChild(canvas);
+
+				ctx.fillStyle = "black";
+				ctx.fillRect(0,0,width,height);
+		 	}
+		</script>
+	</head>
+
+	<body onkeydown="if(event.keyCode==up || event.keyCode==down || event.keyCode==left || event.keyCode==right) keypress(event); if(event.keyCode==selection) select();">
+		
+		<div id="go"><button class="btn" onclick="launch();">Take-off!</button></div>
+	</body>
+</html>
