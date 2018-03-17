@@ -1,2 +1,0 @@
-# OrbitalJam
-EPFL Jam
