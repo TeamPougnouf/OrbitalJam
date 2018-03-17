@@ -1,0 +1,69 @@
+html{
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url("output.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+}
+
+body{
+	margin: 0;
+	padding: 0;
+	color: #ffb628;
+	font-family: sans-serif;
+	text-align: justify;
+	font-size: 12;
+}
+
+p{
+	color: black;
+}
+
+.btn {
+  background: #000000;
+  background-image: -webkit-linear-gradient(top, #000000, #d54ff7);
+  background-image: -moz-linear-gradient(top, #000000, #d54ff7);
+  background-image: -ms-linear-gradient(top, #000000, #d54ff7);
+  background-image: -o-linear-gradient(top, #000000, #d54ff7);
+  background-image: linear-gradient(to bottom, #000000, #d54ff7);
+  -webkit-border-radius: 4;
+  -moz-border-radius: 4;
+  border-radius: 4px;
+  border-color: "black";
+  text-shadow: 2px 2px 0px #4d4a4d;
+  -webkit-box-shadow: 0px 1px 1px #424242;
+  -moz-box-shadow: 0px 1px 1px #424242;
+  box-shadow: 0px 1px 1px #424242;
+  font-family: Courier New;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  width: 10vw;
+}
+
+.btn:hover {
+  background: #d54ff7;
+  text-decoration: none;
+}
+
+#settings{
+	position: absolute;
+	width: 50%;
+	margin-left: 25%;
+	height: auto;
+	margin-top: 12%;
+	z-index: 0;
+}
+
+#game{
+	position: absolute;
+	width: 95vw;
+	margin-left: 2.5vw;
+	height: auto;
+	margin-top: 2.5vw;
+	z-index: 1;
+}
