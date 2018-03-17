@@ -15,27 +15,195 @@
 		<link rel="stylesheet" type="text/css" href="game.css">
 
 		<script type='text/javascript'>
+			//canvas element variables
 			var canvas;
 			var ctx;
 			var width = 2048;
 			var height = 1052;
+			var started = false;
+
+			//GUI variables
+			var thickness = 50;
+			var topPanel = 200;
+			var roundedEdges = 20; //radius of rounded corner
+
+			//blueprint variables
+			var paddingLeft = 250;
+			var paddingTop = 100;
+			var chuteTop = 210;
+			var chuteWidth = 100;
+			var fuseTop = 190;
+
+			//machine variables
+			var machineHeight = 220;
+			var bodyWidth = 250;
+			var bodyHeight = 140;
+			var pipeThickness = 30;
+			var blinkCounter = 0; //blink counter to display failure
+
+			//event variables
+			var hydraulicFailure = false;
+			var hydraulicMachine = Math.floor(Math.random()*6) + 1; //used to determine which machine is failing
+			var electricalFailure = false;
+			var electricalMachine = Math.floor(Math.random()*6) + 1;
+
 
 			function launch() {
-				canvas = document.createElement("canvas");
-		 		canvas.id = "game";
-		 		canvas.height = height;
-		 		canvas.width = width;
-		 		canvas.style.border = "none";
-		 		ctx = canvas.getContext('2d');
-		 		document.body.appendChild(canvas);
+				if(started){
+					console.log("double instance");
+				}
+				else{
+					started = true;
+					canvas = document.createElement("canvas");
+			 		canvas.id = "game";
+			 		canvas.height = height;
+			 		canvas.width = width;
+			 		canvas.style.border = "4px solid";
+			 		ctx = canvas.getContext('2d');
+			 		document.body.appendChild(canvas);
 
-				ctx.fillStyle = "black";
-				ctx.fillRect(0,0,width,height);
+					ctx.fillStyle = "black";
+					ctx.fillRect(0,0,width,height);
+					statusMonitor();
+				}
 		 	}
+
+		 	function statusMonitor(){
+		 		drawGUI();
+
+		 		//GUI text
+		 		ctx.fillStyle = "#80ffff";
+		 		ctx.textAlign = "left";
+		 		ctx.textBaseline = "bottom";
+		 		ctx.font = "46px monospace";
+		 		ctx.fillText("> Status monitor", thickness, topPanel/2 + 26);
+
+		 		ctx.fillStyle = "#009999";
+		 		var partsCatalog = "Parts catalog";
+		 		ctx.fillText("Parts catalog", width - (thickness+ctx.measureText(partsCatalog).width), topPanel/2 + 15);
+
+		 		drawBlueprint();
+		 	}
+
+		 	function drawGUI(){
+		 		//style definitions
+		 		ctx.setLineDash([15, 0]);
+		 		ctx.strokeStyle = "#80ffff";
+		 		ctx.lineWidth = "7";
+		 		var GUIgrad = ctx.createLinearGradient(60,40,1900,1000);
+		 		GUIgrad.addColorStop(0, "#330026");
+		 		GUIgrad.addColorStop(1, "#b30086");
+		 		ctx.fillStyle = GUIgrad;
+
+		 		//outline
+		 		ctx.fillRect(0, 0, width, height);
+		 		ctx.fillStyle = "black";
+		 		ctx.beginPath();
+		 		ctx.moveTo(thickness+roundedEdges, topPanel);
+		 		ctx.lineTo(width - (thickness+roundedEdges), topPanel);
+		 		ctx.arcTo(width - thickness, topPanel, width - thickness, topPanel+roundedEdges, roundedEdges);
+		 		ctx.lineTo(width - thickness, height - (thickness+roundedEdges));
+		 		ctx.arcTo(width - thickness, height - thickness, width - (thickness+roundedEdges), height-thickness, roundedEdges);
+		 		ctx.lineTo(thickness+roundedEdges, height-thickness);
+		 		ctx.arcTo(thickness, height-thickness, thickness, height-(thickness+roundedEdges), roundedEdges);
+		 		ctx.lineTo(thickness, topPanel+roundedEdges);
+		 		ctx.arcTo(thickness, topPanel, thickness+roundedEdges, topPanel, roundedEdges);
+		 		ctx.closePath();
+		 		ctx.fill();
+		 		ctx.stroke();
+		 	}
+
+		 	function drawMachine(machineId){
+		 		ctx.fillStyle = "black";
+		 		console.log("failing machine: "+electricalMachine);
+		 		if(electricalFailure && blinkCounter && (machineId == electricalMachine)){
+		 			console.log("electrical failure blinking");
+		 			ctx.fillStyle = "#ff1ac6";
+		 		}
+		 		ctx.fillRect(0, machineHeight - bodyHeight, bodyWidth, bodyHeight);
+		 		ctx.strokeRect(0, machineHeight - bodyHeight, bodyWidth, bodyHeight);
+		 		ctx.fillStyle = "black";
+		 		if(hydraulicFailure && blinkCounter){
+		 			ctx.fillStyle = "#ff1ac6";
+		 		}
+		 		ctx.beginPath();
+				ctx.moveTo(bodyWidth/2 - pipeThickness/2, machineHeight - bodyHeight);
+				ctx.lineTo(bodyWidth/2 - pipeThickness/2, 0);
+				ctx.moveTo(bodyWidth/2 + pipeThickness/2, machineHeight - bodyHeight);
+				ctx.lineTo(bodyWidth/2 + pipeThickness/2, 0);
+				ctx.moveTo(bodyWidth/2 - pipeThickness/2, machineHeight - bodyHeight);
+				ctx.closePath();
+				ctx.fillRect(bodyWidth/2 - pipeThickness/2, 0, pipeThickness, machineHeight - bodyHeight);
+				ctx.stroke();
+		 	}
+
+		 	function drawBlueprint(){
+		 		//style definitions
+		 		ctx.strokeStyle = "white";
+				ctx.lineWidth = "2";
+				ctx.setLineDash([15, 10]);
+
+				//room outline
+				ctx.save();
+				var roomHeight = height - (thickness+topPanel+2*paddingTop);
+				var roomWidth = width - 2*(thickness+paddingLeft);
+				ctx.translate(thickness,topPanel);
+				ctx.strokeRect(paddingLeft, paddingTop, roomWidth, roomHeight);
+				//pipe chute
+				ctx.beginPath();
+				ctx.moveTo(paddingLeft, paddingTop + chuteTop);
+				ctx.lineTo(paddingLeft - chuteWidth, paddingTop + chuteTop);
+				ctx.lineTo(paddingLeft - chuteWidth, paddingTop + roomHeight - chuteTop);
+				ctx.lineTo(paddingLeft, paddingTop + roomHeight - chuteTop);
+				ctx.moveTo(paddingLeft, paddingTop + chuteTop);
+				ctx.closePath();
+				ctx.stroke();
+				//box of fuses
+				ctx.beginPath();
+				ctx.moveTo(roomWidth + paddingLeft, paddingTop + fuseTop);
+				ctx.lineTo(roomWidth + paddingLeft - chuteWidth, paddingTop + fuseTop);
+				ctx.lineTo(roomWidth + paddingLeft - chuteWidth, paddingTop + roomHeight - fuseTop);
+				ctx.lineTo(roomWidth + paddingLeft, paddingTop + roomHeight - fuseTop);
+				ctx.moveTo(roomWidth + paddingLeft, paddingTop + fuseTop);
+				ctx.closePath();
+				ctx.stroke();
+
+				//machines
+				var machinePadding = (roomWidth - 3*bodyWidth)/4;
+				ctx.translate(paddingLeft, paddingTop);
+				for(var i=1; i<=2; i++){ //rows
+					for(var j=0; j<3; j++){ //columns
+						var machineId = (i-1)*3+j+1;
+						ctx.save();
+						ctx.translate(machinePadding + j*(machinePadding+bodyWidth), 0);
+						drawMachine(machineId);
+						ctx.fillStyle = "white";
+		 				ctx.textAlign = "left";
+		 				ctx.textBaseline = "bottom";
+		 				ctx.font = "30px monospace";
+		 				ctx.fillText(machineId, (bodyWidth - ctx.measureText(machineId).width)/2, (machineHeight - bodyHeight) + bodyHeight/2 + 10);
+						ctx.restore();
+					}
+					ctx.scale(1, -1);
+					ctx.translate(0, -roomHeight);
+				}
+				ctx.restore();
+		 	}
+
+		 	function blink(){
+		 		blinkCounter++;
+		 		blinkCounter = blinkCounter%2;
+
+		 		console.log("blink value: "+blinkCounter);
+
+		 		statusMonitor(); //redraw to display blinking
+		 	}
+
+
 		</script>
 	</head>
 
-	<body onkeydown="if(event.keyCode==up || event.keyCode==down || event.keyCode==left || event.keyCode==right) keypress(event); if(event.keyCode==selection) select();">
+	<body onload='setInterval(blink, 500);'>
 		
 		<div id="go"><button class="btn" onclick="launch();">Take-off!</button></div>
 	</body>
